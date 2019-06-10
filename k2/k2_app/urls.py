@@ -7,6 +7,5 @@ from .views import TestView
 
 urlpatterns = [
     path('', views.index, name='index'),
-    url(r'^test/$', TestView.as_view(), {'test': 'XXX'}),
-    url(r'^test2/$', TemplateView.as_view(template_name='app/test.html'), {'test': 'YYY'}),
+    url(r'^test/$', TemplateView.as_view(template_name='app/test.html'), {'test': 'XXX'}),
 ]
