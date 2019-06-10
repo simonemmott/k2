@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('domain/', include('k2_domain.urls')),
-    path('app/', include('k2_app.urls')),
-    path('admin/', admin.site.urls),
+{% for domain in app.application_domains.all() %}    path('{{domain.name}}/', include('{{domain.name}}.urls')),
+{% endfor %}    path('admin/', admin.site.urls),
 ]
