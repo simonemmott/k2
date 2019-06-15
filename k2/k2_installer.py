@@ -24,6 +24,7 @@ scheme = ''
 netloc = ''
 path = ''
 
+
 class SourceError(Exception):
     pass
 
