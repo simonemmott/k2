@@ -4,7 +4,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 def index(domain, path):
     search_path = '/'.join([BASE_DIR, domain, 'jinja2', path])
     if os.path.isdir(search_path):
