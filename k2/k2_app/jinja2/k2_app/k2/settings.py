@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-{% for domain in app.application_domains.all() %}    '{{domain.name}}',
+{% for app_domain in app.application_domains.all() %}    '{{app_domain.domain.name}}',
 {% endfor %}]
 
 MIDDLEWARE = [
@@ -160,7 +160,7 @@ LOGGING = {
             'propagate': True,
             'handlers': ['console'],
         },
-{% for domain in app.application_domains.all() %}        '{{domain.name}}': {
+{% for app_domain in app.application_domains.all() %}        '{{app_domain.domain.name}}': {
             'handlers': ['console'],
             'level': 'DEBUG'
         },
