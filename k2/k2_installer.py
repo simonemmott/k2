@@ -6,95 +6,92 @@ Created on 5 Feb 2019
 import requests, sys
 import os.path
 from urllib.parse import urlparse
+import argparse
+import json
+import logging
 
-base = os.environ['K2_BASE']
-host = None
+LOG_LEVEL = logging.INFO
 
-def install(src, path=base, name=None):
-    global host
-    
-    response = requests.get(src)
-    parsed_uri = urlparse(src)
-    host = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
-    
-    if not base:
-        raise EnvironmentError('The environment variable K2_BASE is not set')
-    
-    if not path:
-        raise ValueError('The install path must be defined')
-    
-    if not os.path.exists(path):
-        raise FileNotFoundError('The install path: {path} does not exist'.format(path=path))
+logger = logging.getLogger('k2_installer')
+logger.setLevel(LOG_LEVEL)
+ch = logging.StreamHandler()
+ch.setLevel(LOG_LEVEL)
+fmt = logging.Formatter('%(levelname)s %(message)s')
+ch.setFormatter(fmt)
+logger.addHandler(ch)
+
+scheme = ''
+netloc = ''
+path = ''
+
+class SourceError(Exception):
+    pass
+
+def install(source, dest):
+        
+    response = requests.get(source)
+    if response.status_code != 200:
+        resp = json.loads(response.text)
+        logger.error(resp['trace'])
+        raise SourceError(resp['error'])
     
     content_type = response.headers.get('content-type')
     if content_type == 'application/k2-directory':
-        write_directory(response, path, name)
-    elif content_type == 'application/k2-package':
-        write_python_package(response, path, name)
+        write_directory(response, dest)
     elif content_type.split('/')[0] == 'text':
-        write_file(response, path, name)
+        write_file(response, dest)
     else:
-        raise ValueError('{src} returned an unexpected content type: {type}'.format(src=src, type=response.content_type))
+        raise ValueError('{src} returned an unexpected content type: {type}'.format(src=source, type=response.content_type))
     
     
-def write_directory(response, path, name):
-    given_name = None
+def write_directory(response, dest):
 
-    contents = {}
-    for key, value in response.headers.items():
-        if key == '__name__':
-            given_name = value.strip()
-        elif key[:6] == 'alias-':
-            contents[key[6:]] = value.strip()
-        
-    if name:
-        build = '/'.join([path, name])
+    if os.path.exists(dest):
+        logger.warning('Installing to existing directory: {dest}'.format(dest=dest))
     else:
-        if not given_name:
-            raise ValueError('Either a name or given name must be defined')
-        build = '/'.join([path, given_name])
+        logger.info('Installing directory: {dest}'.format(dest=dest))
+    os.makedirs(dest, exist_ok=True)    
+    index = json.loads(response.text)
     
-    try:
-        os.mkdir(build)
-    except FileExistsError as err:
-        if os.path.isdir(build):
-            print('The directory {dir} already exists. Contents will be overwritten'.format(dir=build))
-        else:
-            raise err
-    
-    for alias, src in contents.items():
-        url = host+src
-        install(url, build, alias)
-        
-    return build
-    
+    for key, value in index.items():
+        src = '{scheme}://{netloc}{path}?path={template}'.format(
+                scheme=scheme,
+                netloc=netloc,
+                path=path,
+                template=value
+            )
+        logger.debug('Install: {src} in {dest})'.format(src=src, dest=dest))
+        install(src,  '/'.join([dest, key])
+        )
+            
 
-def write_python_package(response, path, name):
-    build = write_directory(response, path, name)
-    
-    with open('/'.join([build, '__init__.py']), 'w') as fp:
+def write_file(response, dest):
+    dirname = os.path.dirname(dest)
+    if not os.path.exists(dirname):
+        logger.debug('Creating directory: {name}'.format(name=dirname))
+        os.makedirs(dirname, exist_ok=True)
+    if os.path.exists(dest):
+        logger.warning('Replacing file: {file}'.format(file=dest))
+    else:
+        logger.info('Installing file: {file}'.format(file=dest))
+    with open(dest, 'w') as fp:
         fp.write(response.text)
-    
-    return build
-
-def write_file(response, path, name):
-    build = '/'.join([path, name])
-    
-    with open(build, 'w') as fp:
-        fp.write(response.text)
-        
-    return build
         
 if __name__ == '__main__':
-    print(len(sys.argv))
-    if len(sys.argv) == 2:
-        install(sys.argv[1])
-    elif len(sys.argv) == 3:
-        install(sys.argv[1], sys.argv[2])
-    elif len(sys.argv) == 4:
-        install(sys.argv[1], sys.argv[2], sys.argv[3])
-    else:
-        raise ValueError('Incorrect number of arguments')
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('source', help='The source URL to install')
+    parser.add_argument('dest', help='The location in which to install the generated source')
+    args = parser.parse_args()
+    
+    uri = urlparse(args.source)
+    
+    scheme = uri.scheme
+    netloc = uri.netloc
+    path = uri.path
+        
+    logger.info('Installing {src} into {dest}'.format(src=args.source, dest=args.dest))
+    install(args.source, args.dest)
 
 
 
