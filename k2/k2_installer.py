@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 import argparse
 import json
 import logging
+from k2.errors import K2SourceError
 
 LOG_LEVEL = logging.INFO
 
@@ -25,16 +26,13 @@ netloc = ''
 path = ''
 
 
-class SourceError(Exception):
-    pass
-
 def install(source, dest):
         
     response = requests.get(source)
     if response.status_code != 200:
         resp = json.loads(response.text)
         logger.error(resp['trace'])
-        raise SourceError(resp['error'])
+        raise K2SourceError(resp['error'])
     
     content_type = response.headers.get('content-type')
     if content_type == 'application/k2-directory':
