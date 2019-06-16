@@ -43,6 +43,7 @@ def error_response(err, status=500):
 class ApplicationSourceView(APIView):
     
     def get(self, request, app_id):
+        logger.debug('ApplicationSourceView.GET({id})'.format(id=app_id))
         path = request.GET.get('path', None)     
         app = Application.objects.get(id=app_id)
         try:
