@@ -38,7 +38,7 @@ class Jinja2Tests(TestCase):
         self.assertEqual('Hello World!', output)
         
     def test_list_from_string(self):
-        template = jinja2_env.from_string('[{% for model in domain.models %}{{model.name}}.py,{% endfor %}]')
+        template = jinja2_env.from_string('[{% for model in domain.models.all() %}{{model.name}}.py,{% endfor %}]')
         
         lst = template.render(domain=test_domain())[1:-2].split(',')
         self.assertEquals('MODEL_1.py', lst[0])
