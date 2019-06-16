@@ -169,5 +169,9 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG'
         },
+        'k2_util': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
     }
 }

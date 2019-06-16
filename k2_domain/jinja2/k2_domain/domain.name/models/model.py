@@ -1,4 +1,5 @@
 from django.db import models
 
-class {{model.name}}(models.Model):
+class {{model.class_name()}}(models.Model):
+    #hmmmm
     pass

@@ -11,7 +11,7 @@ src_map = {
             'name': '{{domain.name}}'
         },
         'k2_domain/domain.name/models/model.py': {
-            'name': '[{% for model in domain.models.all() %}{{model.name}}.py,{% endfor %}]',
+            'name': '[{% for model in domain.models.all() %}{{model.package_name()}}.py,{% endfor %}]',
             'keys': '[{% for model in domain.models.all() %}model={{model.id}},{% endfor %}]'
         }
     }
