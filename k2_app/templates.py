@@ -6,7 +6,7 @@ from jinja2 import PackageLoader
 
 logger = logging.getLogger(__name__)
 
-jinja2_map = {
+src_map = {
         'k2_domain/domain.name': {
             'name': '{{domain.name}}'
         },
@@ -15,6 +15,19 @@ jinja2_map = {
             'keys': '[{% for model in domain.models.all() %}model={{model.id}},{% endfor %}]'
         }
     }
+def _index_map(env, path, **kw):
+    idx = {}
+    name_template = env.from_string(src_map.get(path)['name'])
+    name = name_template.render(**kw)
+    if name[0] == '[':
+        names = name[1:-2].split(',')
+        keys_template = env.from_string(src_map.get(path)['keys'])
+        keys = keys_template.render(**kw)[1:-2].split(',')
+        for i in range(len(names)):
+            idx[names[i]] = '{path}&{key}'.format(path=path, key=keys[i])
+    else:
+        idx[name] = '{path}'.format(path=path)
+    return idx
 
 
 def index(k2_domain, path, **kw):
@@ -26,17 +39,8 @@ def index(k2_domain, path, **kw):
         logger.debug('Indexing directory: {path}'.format(path=path))
         for file in os.listdir(search_path):
             f_path = '/'.join([path, file])
-            if jinja2_map.get(f_path):
-                name_template = jinja2_env.from_string(jinja2_map.get(f_path)['name'])
-                name = name_template.render(**kw)
-                if name[0] == '[':
-                    names = name[1:-2].split(',')
-                    keys_template = jinja2_env.from_string(jinja2_map.get(f_path)['keys'])
-                    keys = keys_template.render(**kw)[1:-2].split(',')
-                    for i in range(len(names)):
-                        idx[names[i]] = '{path}&{key}'.format(path=f_path, key=keys[i])
-                else:
-                    idx[name] = '{path}'.format(path=f_path)
+            if src_map.get(f_path):
+                 idx.update(_index_map(jinja2_env, f_path, **kw))
             else:
                 idx[file] = '{path}'.format(path=f_path)
         return idx

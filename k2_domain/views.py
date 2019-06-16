@@ -32,10 +32,10 @@ def directory_response(index):
     )
     
 def error_response(err, status=500):
-    logger.exception(err.message)
-    resp = {'error': err.message, 'trace': traceback.format_exc()}
+    logger.exception(str(err))
+    resp = {'error': str(err), 'trace': traceback.format_exc()}
     return JsonResponse(
-        {'error': err.message, 'trace': traceback.format_exc()}, 
+        {'error': str(err), 'trace': traceback.format_exc()}, 
         json_dumps_params={'indent': 4}, 
         status=status
     )
