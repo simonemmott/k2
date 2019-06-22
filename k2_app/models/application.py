@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 import random
-#from ..models import application_domain
+from k2_app.models import application_domain
 
 class Application(models.Model):
     name = models.CharField(max_length=50)
@@ -16,7 +16,7 @@ class Application(models.Model):
         return ''.join(random.choice('abcdefghighjklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for i in range(90))
 
 class ApplicationSerializer(serializers.ModelSerializer):
-#    application_domains = application_domain.ApplicationDomainSerializer(many=True)
+    application_domains = application_domain.ApplicationDomainSerializer(many=True)
     class Meta:
         model = Application
-        fields = ('id', 'name', 'title', 'description')   
+        fields = ('id', 'name', 'title', 'description', 'application_domains')   
