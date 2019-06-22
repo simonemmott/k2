@@ -6,7 +6,7 @@ from .models import Domain, Model
 from k2.jinja2 import environment
 from k2.errors import K2Error, K2SourceError
 from jinja2 import PackageLoader
-from k2_app import templates
+from k2_util import templates
 from jinja2.exceptions import TemplateSyntaxError
 import logging
 import traceback

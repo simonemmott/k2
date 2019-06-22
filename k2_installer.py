@@ -26,6 +26,15 @@ netloc = ''
 path = ''
 
 def install(source, dest):
+    global scheme
+    global netloc
+    global path
+    
+    uri = urlparse(source)
+    
+    scheme = uri.scheme
+    netloc = uri.netloc
+    path = uri.path
         
     response = requests.get(source)
     if response.status_code != 200:
@@ -52,15 +61,24 @@ def write_directory(response, dest):
     index = json.loads(response.text)
     
     for key, value in index.items():
-        src = '{scheme}://{netloc}{path}?path={template}'.format(
-                scheme=scheme,
-                netloc=netloc,
-                path=path,
-                template=value
-            )
+        if value and value[0] != '/':
+            src = '{scheme}://{netloc}{path}?path={template}'.format(
+                    scheme=scheme,
+                    netloc=netloc,
+                    path=path,
+                    template=value
+                )
+        else:
+            src = '{scheme}://{netloc}{path}'.format(
+                    scheme=scheme,
+                    netloc=netloc,
+                    path=value
+                )
         logger.debug('Install: {src} in {dest})'.format(src=src, dest=dest))
-        install(src,  '/'.join([dest, key])
-        )
+        if key == '.':
+            install(src,  dest)
+        else:
+            install(src,  '/'.join([dest, key]))
             
 
 def write_file(response, dest):
@@ -82,12 +100,6 @@ if __name__ == '__main__':
     parser.add_argument('dest', help='The location in which to install the generated source')
     args = parser.parse_args()
     
-    uri = urlparse(args.source)
-    
-    scheme = uri.scheme
-    netloc = uri.netloc
-    path = uri.path
-        
     logger.info('Installing {src} into {dest}'.format(src=args.source, dest=args.dest))
     install(args.source, args.dest)
 

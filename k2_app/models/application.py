@@ -1,5 +1,7 @@
 from django.db import models
+from rest_framework import serializers
 import random
+#from ..models import application_domain
 
 class Application(models.Model):
     name = models.CharField(max_length=50)
@@ -13,4 +15,8 @@ class Application(models.Model):
     def secret(self):
         return ''.join(random.choice('abcdefghighjklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for i in range(90))
 
-    
+class ApplicationSerializer(serializers.ModelSerializer):
+#    application_domains = application_domain.ApplicationDomainSerializer(many=True)
+    class Meta:
+        model = Application
+        fields = ('id', 'name', 'title', 'description')   

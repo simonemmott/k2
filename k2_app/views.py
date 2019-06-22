@@ -2,11 +2,11 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic.base import TemplateView, View
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Application
+from .models.application import Application, ApplicationSerializer
 from k2.jinja2 import environment
 from k2.errors import K2Error, K2SourceError
 from jinja2 import PackageLoader
-from . import templates
+from k2_util import templates
 from jinja2.exceptions import TemplateSyntaxError
 import logging
 import traceback
@@ -32,13 +32,27 @@ def directory_response(index):
     )
     
 def error_response(err, status=500):
-    logger.exception(err.message)
-    resp = {'error': err.message, 'trace': traceback.format_exc()}
+    logger.exception(str(err))
+    resp = {'error': str(err), 'trace': traceback.format_exc()}
     return JsonResponse(
-        {'error': err.message, 'trace': traceback.format_exc()}, 
+        {'error': str(err), 'trace': traceback.format_exc()}, 
         json_dumps_params={'indent': 4}, 
         status=status
     )
+    
+class ApplicationView(APIView):
+    
+    def get(self, request, id):
+        logger.debug('ApplicationView.GET({id})'.format(id=id))
+        try:
+            if id.isdigit():
+                app = Application.objects.get(id=id)
+            else:
+                app = Application.objects.get(name=id)
+        except Application.DoesNotExist:
+            return HttpResponse(status=404)
+        
+        return JsonResponse(ApplicationSerializer(app).data)
 
 class ApplicationSourceView(APIView):
     
@@ -54,7 +68,7 @@ class ApplicationSourceView(APIView):
                     template = jinja2_env.get_template(path)
                     return python_response(template.render(app=app))                                        
             else:
-                raise K2SourceError('No template given')
+                return directory_response(templates.application_index(app))
         except Exception as err:
             return error_response(err)
 
