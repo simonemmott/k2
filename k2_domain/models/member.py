@@ -13,6 +13,7 @@ class Member(models.Model):
             (METHOD, 'Method'),
             (LIST, 'List'),
         ]
+        
     class DataType:
         INTEGER = 'INT'
         FLOAT = 'FLT'
@@ -28,6 +29,12 @@ class Member(models.Model):
             (DATE, 'Date'),
             (OBJECT, 'Object'),
         ]
+        
+    class RawDataType:
+        NUMBER = 'NUM'
+        STRING = 'STR'
+        BOOLEAN = 'BLN'
+        
     name = models.CharField('Name', max_length=50, blank=False, null=False)
     title = models.CharField('Title', max_length=90, blank=False, null=False)
     description = models.TextField('Description', blank=True, null=True)
@@ -38,9 +45,10 @@ class Member(models.Model):
     
     def __str__(self):
         return '{type}: {cls}::{field}({title})'.format(
-            type=k2_core.model.get_choice_display(Member.Type.CHOICES, self.type),
+            type=self.get_type_display(),
             cls=self.model.class_name(),
             field=self.name,
             title=self.title
         )
+    
     
