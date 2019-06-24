@@ -3,7 +3,8 @@ from jinja2 import Environment
 from k2.jinja2 import environment
 from jinja2 import PackageLoader
 import json
-from k2_app import templates
+from k2_util import templates
+from k2.settings import BASE_DIR
 from posix import lstat
 
 jinja2_env = environment(loader=PackageLoader('k2_domain', 'jinja2'))
@@ -48,12 +49,12 @@ class IndexTests(TestCase):
     
     def test_indexes(self):
 
-        index = templates.index('k2_domain', 'k2_domain', domain=test_domain())
+        index = templates.index(jinja2_env, BASE_DIR, 'k2_domain', 'k2_domain', domain=test_domain())
         self.assertEquals(1, len(index))
         self.assertTrue('DOMAIN_NAME' in index.keys())
         self.assertEquals('k2_domain/domain.name', index.get('DOMAIN_NAME'))
         
-        index = templates.index('k2_domain', 'k2_domain/domain.name/models', domain=test_domain())
+        index = templates.index(jinja2_env, BASE_DIR, 'k2_domain', 'k2_domain/domain.name/models', domain=test_domain())
         self.assertEquals(3, len(index))
         self.assertTrue('__init__.py' in index.keys())
         self.assertEquals('k2_domain/domain.name/models/__init__.py', index.get('__init__.py'))

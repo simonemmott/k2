@@ -1,6 +1,5 @@
 from django.db import models
 from rest_framework import serializers
-#from k2_app.models.application import Application
 from k2_domain.models import Domain
 
 class ApplicationDomain(models.Model):

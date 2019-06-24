@@ -11,6 +11,7 @@ from jinja2.exceptions import TemplateSyntaxError
 import logging
 import traceback
 import json
+from k2.settings import BASE_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ class DomainSourceView(APIView):
         try:
             if path:
                 try:
-                    return directory_response(templates.index('k2_domain', path, **kw))
+                    return directory_response(templates.index(jinja2_env, BASE_DIR, 'k2_domain', path, **kw))
                 except:
                     template = jinja2_env.get_template(path)
                     return python_response(template.render(**kw))                                        
