@@ -8,6 +8,8 @@ class Model(models.Model):
     description = models.TextField('Description', blank=True, null=True)
     admin_model = models.BooleanField('Admin Model', blank=True, null=True, default=False)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='models')
+    # members list of Members of Model
+    # members_with_data_type list of Members with this model as a data type
     
     def __str__(self):
         return self.title
