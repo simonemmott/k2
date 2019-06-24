@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Domain
+{% for model in domain.models.filter(admin_model=True) %}from .models import {{model.class_name()}}
+{% endfor %}
 
 # Register your models here.
-admin.site.register(Domain)
+{% for model in domain.models.filter(admin_model=True) %}admin.site.register({{model.class_name()}})
+{% endfor %}

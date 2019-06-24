@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = '{{app.name}}.urls'
+ROOT_URLCONF = 'k2.urls'
 
 
 TEMPLATES = [
@@ -61,7 +61,7 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'environment': '{{app.name}}.jinja2.environment'
+            'environment': 'k2.jinja2.environment'
         },
     },
     {
@@ -79,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = '{{app.name}}.wsgi.application'
+WSGI_APPLICATION = 'k2.wsgi.application'
 
 
 # Database
