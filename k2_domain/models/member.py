@@ -1,4 +1,5 @@
 from django.db import models
+import k2_core.model
 
 class Member(models.Model):
     class Type:
@@ -21,10 +22,10 @@ class Member(models.Model):
         OBJECT = 'OBJ'
         CHOICES = [
             (INTEGER, 'Integer'),
-            (FLOAT, 'Integer'),
-            (STRING, 'Integer'),
-            (BOOLEAN, 'Integer'),
-            (DATE, 'Integer'),
+            (FLOAT, 'Float'),
+            (STRING, 'String'),
+            (BOOLEAN, 'Boolean'),
+            (DATE, 'Date'),
             (OBJECT, 'Object'),
         ]
     name = models.CharField('Name', max_length=50, blank=False, null=False)
@@ -37,7 +38,7 @@ class Member(models.Model):
     
     def __str__(self):
         return '{type}: {cls}::{field}({title})'.format(
-            type=self.get_TYPE_display(),
+            type=k2_core.model.get_choice_display(Member.Type.CHOICES, self.type),
             cls=self.model.class_name(),
             field=self.name,
             title=self.title
