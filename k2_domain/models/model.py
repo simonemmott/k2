@@ -1,6 +1,7 @@
 from django.db import models
 from .domain import Domain
 from .member import Member
+from .field import Field
 
 import k2_util
 
@@ -23,4 +24,4 @@ class Model(models.Model):
         return k2_util.to_snake_case(self.name)
     
     def fields(self):
-        return [member.field for member in self.members.filter(type=Member.Type.FIELD)]
+        return Field.objects.filter(model=self)
