@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import pluralize
 from .domain import Domain
 from .member import Member
 from .field import Field
@@ -8,6 +9,7 @@ import k2_util
 class Model(models.Model):
     name = models.CharField('Name', max_length=50, blank=False, null=False)
     title = models.CharField('Title', max_length=90, blank=False, null=False)
+    p_title = models.CharField('Plural title', max_length=90, blank=True, null=True)
     description = models.TextField('Description', blank=True, null=True)
     admin_model = models.BooleanField('Admin Model', blank=True, null=True, default=False)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='models')
@@ -25,3 +27,6 @@ class Model(models.Model):
     
     def fields(self):
         return Field.objects.filter(model=self)
+    
+    def plural_title(self):
+        return self.p_title if self.p_title else k2_util.to_plural(self.title)
