@@ -1,5 +1,6 @@
 from django.db import models
 from .member import Member
+import k2_util
 
 class Field(Member):
     class FieldType:
@@ -52,6 +53,8 @@ class Field(Member):
     field_type = models.CharField('Field Type', max_length=3, choices=FieldType.CHOICES, default=FieldType.STRING, blank=False, null=False)
     on_delete_type = models.CharField('On delete', max_length=3, choices=OnDeleteType.CHOICES, default=OnDeleteType.CASCADE, blank=True, null=True)
     
+    # sub_types -> list of SubType values for this field if it is a SUB_TYPE
+    
     def __init__(self, *args, **kw):
         super(Field, self).__init__(*args, **kw)
         self.type = Member.Type.FIELD
@@ -59,6 +62,9 @@ class Field(Member):
     def save(self, *args, **kw):
         self.type = Member.Type.FIELD
         return super(Member, self).save(*args, **kw)
+    
+    def types_name(self):
+        return '{name}Type'.format(name=k2_util.to_class_case(self.name))
     
     def field_class_name(self):
         if self.field_type == Field.FieldType.BOOLEAN:
@@ -92,7 +98,7 @@ class Field(Member):
         if self.field_type == Field.FieldType.LINKED:
             return 'ForeignKey'
         if self.field_type == Field.FieldType.SUB_TYPE:
-            return 'CharKey'
+            return 'CharField'
         
         raise ValueError('No field class defined for field of {type} - ({disp})'.format(type=self.field_type, disp=self.get_field_type_display()))
     
@@ -108,6 +114,7 @@ class Field(Member):
                 self._verbose_name_clause()+\
                 self._default_clause()+\
                 self._max_length_clause()+\
+                self._choices_clause()+\
                 self._null_clause()+\
                 self._blank_clause()+\
                 self._help_text_clause()
@@ -131,6 +138,11 @@ class Field(Member):
     def _max_length_clause(self):
         if self.max_length and self.max_length > 0:
             return ', max_length={v}'.format(v=self.max_length)
+        return ''
+    
+    def _choices_clause(self):
+        if self.field_type == Field.FieldType.SUB_TYPE:
+            return ', choices={v}.CHOICES'.format(v=self.types_name())
         return ''
     
     def _blank_clause(self):
