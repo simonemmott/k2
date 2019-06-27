@@ -17,7 +17,8 @@ class Field(Member):
         TEXT = 'TXT'
         TIME = 'TME'
         URL = 'URL'
-        FOREIGN_KEY = 'FKY'
+        LINKED = 'LKD'
+        SUB_TYPE = 'SBT'
         CHOICES = [
             (BOOLEAN, 'Boolean'),
             (NULL_BOOLEAN, 'Null boolean'),
@@ -32,7 +33,8 @@ class Field(Member):
             (TEXT, 'Memo'),
             (TIME, 'Time'),
             (URL, 'URL'),
-            (FOREIGN_KEY, 'Foreign key')
+            (LINKED, 'Linked field'),
+            (SUB_TYPE, 'Sub type')
         ]
     class OnDeleteType:
         CASCADE = 'CAS'
@@ -87,13 +89,15 @@ class Field(Member):
             return 'TimeField'
         if self.field_type == Field.FieldType.URL:
             return 'UrlField'
-        if self.field_type == Field.FieldType.FOREIGN_KEY:
+        if self.field_type == Field.FieldType.LINKED:
             return 'ForeignKey'
+        if self.field_type == Field.FieldType.SUB_TYPE:
+            return 'CharKey'
         
         raise ValueError('No field class defined for field of {type} - ({disp})'.format(type=self.field_type, disp=self.get_field_type_display()))
     
     def title_or_link_type(self):
-        if self.field_type in [Field.FieldType.FOREIGN_KEY]:
+        if self.field_type in [Field.FieldType.LINKED]:
             if self.object_type.domain == self.model.domain:
                 return self.object_type.class_name()
             return '{domain}.{model}'.format(domain=self.object_type.domain.name, model=self.object_type.class_name())
@@ -150,7 +154,7 @@ class Field(Member):
             return ', default="{v}"'.format(v=self.default_value.replace('"', "'"))  
         return ''
     
-_related_types = [Field.FieldType.FOREIGN_KEY]
+_related_types = [Field.FieldType.LINKED]
 
 _on_delete_names = {
     Field.OnDeleteType.CASCADE: 'CASCADE',
