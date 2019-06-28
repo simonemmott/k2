@@ -1,5 +1,4 @@
 from django.db import models
-import k2_core.model
 
 class Member(models.Model):
     class Type:
