@@ -42,5 +42,5 @@ class Member(models.Model, MemberMixin):
     data_type = models.CharField('Data Type', max_length=3, choices=DataType.CHOICES, default=DataType.STRING, blank=False, null=False)
     object_type = models.ForeignKey('Model', on_delete=models.PROTECT, related_name='members_with_data_type', blank=True, null=True)
     model = models.ForeignKey('Model', on_delete=models.CASCADE, related_name='members', blank=False, null=False)
-        
+    
     
