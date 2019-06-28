@@ -1,6 +1,7 @@
 from django.db import models
+from k2_core.mixins.member import MemberMixin
 
-class Member(models.Model):
+class Member(models.Model, MemberMixin):
     class Type:
         FIELD = 'FLD'
         EXPRESSION = 'EXP'
@@ -41,13 +42,5 @@ class Member(models.Model):
     data_type = models.CharField('Data Type', max_length=3, choices=DataType.CHOICES, default=DataType.STRING, blank=False, null=False)
     object_type = models.ForeignKey('Model', on_delete=models.PROTECT, related_name='members_with_data_type', blank=True, null=True)
     model = models.ForeignKey('Model', on_delete=models.CASCADE, related_name='members', blank=False, null=False)
-    
-    def __str__(self):
-        return '{type}: {cls}::{field}({title})'.format(
-            type=self.get_type_display(),
-            cls=self.model.class_name(),
-            field=self.name,
-            title=self.title
-        )
-    
+        
     
