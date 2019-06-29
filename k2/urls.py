@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from k2_core import mixins
 
 urlpatterns = [
     path('k2_domain/', include('k2_domain.urls')),
     path('k2_app/', include('k2_app.urls')),
     path('admin/', admin.site.urls),
 ]
+
+mixins.push_registry()
