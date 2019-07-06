@@ -35,12 +35,12 @@ class Member(models.Model, MemberMixin):
         STRING = 'STR'
         BOOLEAN = 'BLN'
         
-    name = models.CharField('Name', max_length=50, blank=False, null=False)
-    title = models.CharField('Title', max_length=90, blank=False, null=False)
+    name = models.CharField('Name', max_length=50, blank=False, null=True)
+    title = models.CharField('Title', max_length=90, blank=False, null=True)
     description = models.TextField('Description', blank=True, null=True)
-    type = models.CharField('Member Type', max_length=3, choices=Type.CHOICES, default=Type.FIELD, blank=False, null=False)
-    data_type = models.CharField('Data Type', max_length=3, choices=DataType.CHOICES, default=DataType.STRING, blank=False, null=False)
+    type = models.CharField('Member Type', max_length=3, choices=Type.CHOICES, default=Type.FIELD, blank=False, null=True)
+    data_type = models.CharField('Data Type', max_length=3, choices=DataType.CHOICES, default=DataType.STRING, blank=False, null=True)
     object_type = models.ForeignKey('Model', on_delete=models.PROTECT, related_name='members_with_data_type', blank=True, null=True)
-    model = models.ForeignKey('Model', on_delete=models.CASCADE, related_name='members', blank=False, null=False)
+    base_type = models.ForeignKey('BaseType', on_delete=models.CASCADE, related_name='members', blank=False, null=True)
     
     

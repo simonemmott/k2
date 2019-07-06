@@ -1,6 +1,5 @@
 from django.db import models
 from rest_framework import serializers
-import random
 from k2_app.models import application_domain
 from k2_core.mixins.application import ApplicationMixin
 
