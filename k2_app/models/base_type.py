@@ -1,7 +1,5 @@
 from django.db import models
-from .domain import Domain
 from .member import Member
-from .field import Field
 from k2_core.mixins.base_type import BaseTypeMixin
 
 import k2_util

@@ -1,5 +1,5 @@
 from django.db import models
-from .member import Member
+from k2_app.models.member import Member
 import k2_util
 from k2_core.mixins.field import FieldMixin
 
