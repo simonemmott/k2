@@ -7,11 +7,13 @@ class Member(models.Model, MemberMixin):
         EXPRESSION = 'EXP'
         METHOD = 'MTH'
         LIST = 'LST'
+        CLASS = 'CLS'
         CHOICES = [
             (FIELD, 'Field'),
             (EXPRESSION, 'Expression'),
             (METHOD, 'Method'),
             (LIST, 'List'),
+            (CLASS, 'Class')
         ]
         
     class DataType:

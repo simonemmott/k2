@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic.base import TemplateView, View
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models.application import Application, ApplicationSerializer
+from k2_app.models.application import Application
 from k2.errors import K2Error, K2SourceError
 from k2_core import templates
 from jinja2.exceptions import TemplateSyntaxError

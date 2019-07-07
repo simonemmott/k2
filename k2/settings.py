@@ -38,9 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'k2_app',
     'k2_domain',
 ]
+
+SERIALIZERS = [
+    'k2_app.serializers',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
