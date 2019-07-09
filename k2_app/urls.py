@@ -10,5 +10,5 @@ urlpatterns = [
     path('api/application/<str:id>/', ApplicationView.as_view()),
     path('src/<int:app_id>/', ApplicationSourceView.as_view()),
     path('api/packages/', PackageList.as_view()),
-    path('api/package/<str:name>/', PackageList.as_view()),
+    path('api/package/<str:name>/', PackageDetail.as_view()),
 ]

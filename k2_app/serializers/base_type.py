@@ -7,3 +7,8 @@ class DataTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseType
         fields = ['name']
+        extra_kwargs = {
+            'name': {
+                'validators': []
+            }
+        }

@@ -1,5 +1,4 @@
 from django.db import models
-from .member import Member
 from k2_core.mixins.base_type import BaseTypeMixin
 
 import k2_util
